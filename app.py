@@ -5,13 +5,30 @@ from PIL import Image
 img = Image.open("raghu.jpg")
 img = img.rotate(250, expand=True)  # Rotate 90 degrees counter-clockwise
 
-st.image(img, caption="Raghu in Action!")
+# --- New Interactive Slider ---
 
-reaction_level = st.slider("Rate Raghu's awesomeness!", 1, 10, 5)
+st.markdown(
+    """
+    <style>
+        .stSlider > div > div > div > div {
+            background-color: #FFA500;  /* Orange for more visual appeal */
+        }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
 
+reaction_level = st.slider("**Rate Raghu's Awesomeness!** 🤯", 1, 10, 5)
+
+# --- Conditional Reactions ---
 if reaction_level == 10:
-    st.write("💯 Agreed! Raghu's the absolute best!")
+    confirm_best = st.checkbox("Whoa! Are you *absolutely sure* Raghu's the best?")
+    if confirm_best:
+        st.image(img, caption="Raghu in Action! 😎")
+        st.write("💯 Alright, alright! We get it, Raghu's your hero! 🥳")
+    else:
+        st.write("🤔 Maybe dial it back a notch? 😉")
 elif reaction_level >= 5:
-    st.write("👍 He's pretty cool, but there's always room to grow!")
+    st.write("👍 Raghu's got some moves, but can he moonwalk? 🤔")
 else:
-    st.write("🤔 Hmm, maybe next time he'll impress you more.") 
+    st.write("😂 Did Raghu trip over his shoelaces again? 🤪")
