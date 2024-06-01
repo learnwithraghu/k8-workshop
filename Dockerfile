@@ -1,13 +1,11 @@
-FROM python:3.9-slim-buster
+FROM python:3.9-slim
 
 WORKDIR /app
 
 COPY requirements.txt requirements.txt
-RUN pip3 install -r requirements.txt
+RUN pip install -r requirements.txt
 
-COPY app.py .
-COPY raghu.jpg .
+COPY . .
 
-EXPOSE 8501
-
-CMD ["streamlit", "run", "app.py"]
+EXPOSE 5007
+CMD ["gunicorn", "-b", "0.0.0.0:5007", "app:app"]

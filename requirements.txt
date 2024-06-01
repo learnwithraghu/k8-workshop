@@ -1,2 +1,3 @@
-streamlit
-pillow  # (If you're using Version 3 with the image)
+flask
+Pillow
+gunicorn  # For production WSGI server

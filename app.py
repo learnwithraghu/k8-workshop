@@ -1,34 +1,37 @@
-import streamlit as st
+from flask import Flask, render_template, request
 from PIL import Image
 
-# Load and rotate the image to be vertical
-img = Image.open("raghu.jpg")
-img = img.rotate(250, expand=True)  # Rotate 90 degrees counter-clockwise
+app = Flask(__name__)
 
-# --- New Interactive Slider ---
+@app.route('/', methods=['GET', 'POST'])
+def index():
+    reaction_level = 5  # Default rating
+    show_image = False  # Initially don't show image
+    message = ""
 
-st.markdown(
-    """
-    <style>
-        .stSlider > div > div > div > div {
-            background-color: #FFA500;  /* Orange for more visual appeal */
-        }
-    </style>
-    """,
-    unsafe_allow_html=True,
-)
+    if request.method == 'POST':
+        reaction_level = int(request.form.get('reaction_level', 5))
+        
+        if reaction_level == 10:
+            confirm_best = request.form.get('confirm_best')
+            if confirm_best == 'on':  # Checkbox is checked
+                show_image = True
+                message = "💯 Alright, alright! We get it, Raghu's your hero! 🥳"
+            else:
+                message = "🤔 Maybe dial it back a notch? 😉"
+        elif reaction_level >= 5:
+            message = "👍 Raghu's got some moves, but can he moonwalk? 🤔"
+        else:
+            message = "😂 Did Raghu trip over his shoelaces again? 🤪"
 
-reaction_level = st.slider("**Rate Raghu's Awesomeness!** 🤯", 1, 10, 5)
+    # Load and rotate image (only if needed)
+    img_data = None
+    if show_image:
+        img = Image.open("static/raghu.jpg")
+        img = img.rotate(250, expand=True)
+        img_data = img
 
-# --- Conditional Reactions ---
-if reaction_level == 10:
-    confirm_best = st.checkbox("Whoa! Are you *absolutely sure* Raghu's the best?")
-    if confirm_best:
-        st.image(img, caption="Raghu in Action! 😎")
-        st.write("💯 Alright, alright! We get it, Raghu's your hero! 🥳")
-    else:
-        st.write("🤔 Maybe dial it back a notch? 😉")
-elif reaction_level >= 5:
-    st.write("👍 Raghu's got some moves, but can he moonwalk? 🤔")
-else:
-    st.write("😂 Did Raghu trip over his shoelaces again? 🤪")
+    return render_template('index.html', reaction_level=reaction_level, show_image=show_image, message=message, img_data=img_data)
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5007, debug=True)  # For Docker
