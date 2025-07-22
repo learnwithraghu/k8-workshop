@@ -7,5 +7,6 @@ RUN pip install -r requirements.txt
 
 COPY . .
 
-EXPOSE 5007
-CMD ["gunicorn", "-b", "0.0.0.0:5007", "app:app"]
+EXPOSE 8501
+
+CMD ["streamlit", "run", "app.py", "--server.port=8501", "--server.address=0.0.0.0"]

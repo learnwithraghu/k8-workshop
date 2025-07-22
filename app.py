@@ -1,37 +1,58 @@
-from flask import Flask, render_template, request
-from PIL import Image
+import streamlit as st
+import os
 
-app = Flask(__name__)
+# Set page config
+st.set_page_config(
+    page_title="Rate Raghu's Awesomeness!",
+    page_icon="🤯",
+    layout="centered"
+)
 
-@app.route('/', methods=['GET', 'POST'])
-def index():
-    reaction_level = 5  # Default rating
-    show_image = False  # Initially don't show image
-    message = ""
+# Title
+st.title("Rate Raghu's Awesomeness! 🤯")
 
-    if request.method == 'POST':
-        reaction_level = int(request.form.get('reaction_level', 5))
-        
-        if reaction_level == 10:
-            confirm_best = request.form.get('confirm_best')
-            if confirm_best == 'on':  # Checkbox is checked
-                show_image = True
-                message = "💯 Alright, alright! We get it, Raghu's your hero! 🥳"
-            else:
-                message = "🤔 Maybe dial it back a notch? 😉"
-        elif reaction_level >= 5:
-            message = "👍 Raghu's got some moves, but can he moonwalk? 🤔"
-        else:
-            message = "😂 Did Raghu trip over his shoelaces again? 🤪"
+# Display the image
+image_path = "static/raghu.jpg"
+if os.path.exists(image_path):
+    st.image(image_path, caption="Raghu in Action!", use_column_width=True)
+else:
+    st.error("Image not found! Please make sure raghu.jpg is in the static folder.")
 
-    # Load and rotate image (only if needed)
-    img_data = None
-    if show_image:
-        img = Image.open("static/raghu.jpg")
-        img = img.rotate(250, expand=True)
-        img_data = img
+# Rating slider
+rating = st.slider("How awesome is Raghu?", min_value=0, max_value=10, value=5)
 
-    return render_template('index.html', reaction_level=reaction_level, show_image=show_image, message=message, img_data=img_data)
+# Submit button
+if st.button("Submit Rating!", type="primary"):
+    # Generate funny messages based on rating
+    if rating == 10:
+        st.success("🎉 Wow thanks a lot! Raghu is absolutely amazing! 🌟")
+        st.balloons()
+    elif rating == 9:
+        st.success("😍 Almost perfect! Raghu is fantastic! ⭐")
+    elif rating == 8:
+        st.success("👏 Great job Raghu! You're doing awesome! 🎊")
+    elif rating == 7:
+        st.info("👍 Pretty good! Raghu's got some solid skills! 💪")
+    elif rating == 6:
+        st.info("😊 Not bad at all! Raghu's on the right track! 🚀")
+    elif rating == 5:
+        st.warning("🤔 Right in the middle! Raghu's got potential! 📈")
+    elif rating == 4:
+        st.warning("😅 Room for improvement! Keep going Raghu! 💪")
+    elif rating == 3:
+        st.warning("🤷‍♂️ Could be better! What can Raghu work on? 🔧")
+    elif rating == 2:
+        st.error("😬 Ouch! Raghu might need some practice! 📚")
+    elif rating == 1:
+        st.error("😱 Yikes! Time for Raghu to level up! 🎮")
+    else:  # rating == 0
+        st.error("🤔 Hey what can Raghu do better? Everyone starts somewhere! 🌱")
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5007, debug=True)  # For Docker
+# Add some fun info
+st.markdown("---")
+st.markdown("### 📊 Your Rating: " + "⭐" * rating + "☆" * (10 - rating))
+st.markdown(f"**Score: {rating}/10**")
+
+# Footer
+st.markdown("---")
+st.markdown("*Built with ❤️ using Streamlit*")
